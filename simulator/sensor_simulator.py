@@ -105,5 +105,5 @@ while True:
     status
 )
 
-    time.sleep(2)
+    time.sleep(1)
 
