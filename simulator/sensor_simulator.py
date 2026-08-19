@@ -3,6 +3,7 @@ import time
 import csv
 import os
 from datetime import datetime
+import paho.mqtt.client as mqtt
 
 temperature = 42.0
 vibration = 0.15
@@ -52,6 +53,9 @@ def display_reading(timestamp, temperature, vibration, current, status):
     print(f"Status: {status}")
     print("--------------------")
 
+mqtt_client = mqtt.Client()
+mqtt_client.connect("localhost", 1883, 60)
+
 while True:
     temperature, vibration, current = generate_sensor_data(
         temperature,
@@ -60,7 +64,28 @@ while True:
 )
 
     status = determine_status(temperature, vibration, current)
+
+    mqtt_client.publish(
+    "factory/machine01/temperature",
+    temperature
+)
+
+    mqtt_client.publish(
+    "factory/machine01/vibration",
+    vibration
+)
+
+    mqtt_client.publish(
+    "factory/machine01/current",
+    current
+)
+
+    mqtt_client.publish(
+    "factory/machine01/status",
+    status
+)
     
+
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     save_to_csv(
