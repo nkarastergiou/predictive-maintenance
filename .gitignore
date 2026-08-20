@@ -2,3 +2,5 @@
 __pycache__/
 *.pyc
 data/sensor_data.csv
+data/sensor_data.csv
+data/predictive_training_data.csv

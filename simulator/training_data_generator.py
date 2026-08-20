@@ -1,36 +1,50 @@
 import random
 import csv
 
-def generate_sample(status):
-    if status == "NORMAL":
-        temperature = random.uniform(35, 48)
-        vibration = random.uniform(0.05, 0.22)
-        current = random.uniform(3.0, 5.2)
 
-    elif status == "WARNING":
-        temperature = random.uniform(45, 65)
-        vibration = random.uniform(0.20, 0.60)
-        current = random.uniform(5.0, 8.0)
-
+def determine_status(temperature, vibration, current):
+    if temperature >= 48 or vibration >= 0.28 or current >= 5.7:
+        return "FAILURE RISK"
+    elif temperature >= 45 or vibration >= 0.22 or current >= 5.2:
+        return "WARNING"
     else:
-        temperature = random.uniform(60, 90)
-        vibration = random.uniform(0.55, 1.00)
-        current = random.uniform(7.5, 12.0)
+        return "NORMAL"
 
-    return (
-        round(temperature, 2),
-        round(vibration, 2),
-        round(current, 2),
-        status
-    )
+
+def generate_sample(target_status):
+    while True:
+        if target_status == "NORMAL":
+            temperature = random.uniform(35, 45)
+            vibration = random.uniform(0.05, 0.22)
+            current = random.uniform(3.0, 5.2)
+
+        elif target_status == "WARNING":
+            temperature = random.uniform(40, 48)
+            vibration = random.uniform(0.15, 0.28)
+            current = random.uniform(4.0, 5.7)
+
+        else:
+            temperature = random.uniform(45, 90)
+            vibration = random.uniform(0.20, 1.0)
+            current = random.uniform(4.5, 12.0)
+
+        temperature = round(temperature, 2)
+        vibration = round(vibration, 2)
+        current = round(current, 2)
+
+        actual_status = determine_status(
+            temperature,
+            vibration,
+            current
+        )
+
+        if actual_status == target_status:
+            return temperature, vibration, current, actual_status
+
 
 output_file = "data/training_data.csv"
 
-statuses = [
-    "NORMAL",
-    "WARNING",
-    "FAILURE RISK"
-]
+statuses = ["NORMAL", "WARNING", "FAILURE RISK"]
 
 with open(output_file, "w", newline="") as file:
     writer = csv.writer(file)
@@ -42,9 +56,18 @@ with open(output_file, "w", newline="") as file:
         "status"
     ])
 
-    for _ in range(10000):
-        status = random.choice(statuses)
-        sample = generate_sample(status)
-        writer.writerow(sample)
+    for i in range(10000):
+        target_status = statuses[i % 3]
 
-print("Training dataset created successfully.")        
+        temperature, vibration, current, status = generate_sample(
+            target_status
+        )
+
+        writer.writerow([
+            temperature,
+            vibration,
+            current,
+            status
+        ])
+
+print("Balanced training dataset created successfully.")    
