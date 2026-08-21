@@ -8,6 +8,8 @@ import paho.mqtt.client as mqtt
 temperature = 42.0
 vibration = 0.15
 current = 4.5
+failure_duration = 0
+machine_failed = False
 
 csv_file = "data/sensor_data.csv"
 
@@ -63,7 +65,58 @@ while True:
         current
 )
 
-    status = determine_status(temperature, vibration, current)
+    if machine_failed:
+        status = "FAILURE RISK"
+    else:
+        status = determine_status(temperature, vibration, current)
+
+        if status == "FAILURE RISK":
+            machine_failed = True
+    
+    if status == "FAILURE RISK":
+        failure_duration += 1
+    else:
+        failure_duration = 0
+
+    if failure_duration >= 10:
+        print("Maintenance performed - machine reset")
+        print("--------------------")
+
+        mqtt_client.publish(
+            "factory/machine01/maintenance",
+            "RESET"
+        )
+
+        temperature = 42.0
+        vibration = 0.15
+        current = 4.5
+
+        failure_duration = 0
+        machine_failed = False
+
+        mqtt_client.publish(
+            "factory/machine01/temperature",
+            temperature
+        )
+
+        mqtt_client.publish(
+            "factory/machine01/vibration",
+            vibration
+        )
+
+        mqtt_client.publish(
+            "factory/machine01/current",
+            current
+        )
+
+        mqtt_client.publish(
+            "factory/machine01/status",
+            "NORMAL"
+        )
+
+        time.sleep(1)
+        continue
+
 
     mqtt_client.publish(
     "factory/machine01/temperature",
