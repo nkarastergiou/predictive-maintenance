@@ -1,0 +1,844 @@
+[
+    {
+        "id": "b2c61c7f661953be",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "b5af831c8cf31a89",
+        "type": "mqtt in",
+        "z": "b2c61c7f661953be",
+        "name": "",
+        "topic": "factory/+/#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "22afef3778458597",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 120,
+        "y": 120,
+        "wires": [
+            [
+                "176142681ad1a855",
+                "9d4e08b3e806fbc5"
+            ]
+        ]
+    },
+    {
+        "id": "e5cef5fe01278646",
+        "type": "debug",
+        "z": "b2c61c7f661953be",
+        "name": "Normal status",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "9d4e08b3e806fbc5",
+        "type": "switch",
+        "z": "b2c61c7f661953be",
+        "name": "switch(topic)",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "cont",
+                "v": "status",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "/maintenance",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 330,
+        "y": 80,
+        "wires": [
+            [
+                "ae45bb69cbf18e61"
+            ],
+            [
+                "987d16d5eedb2c78"
+            ]
+        ]
+    },
+    {
+        "id": "e4936103c8073f7b",
+        "type": "switch",
+        "z": "b2c61c7f661953be",
+        "name": "switch(payload)",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "NORMAL",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "WARNING",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "FAILURE RISK",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 660,
+        "y": 120,
+        "wires": [
+            [
+                "e5cef5fe01278646"
+            ],
+            [
+                "68c686f8d263aa39"
+            ],
+            [
+                "298d0ee14d5db54a"
+            ]
+        ]
+    },
+    {
+        "id": "68c686f8d263aa39",
+        "type": "debug",
+        "z": "b2c61c7f661953be",
+        "name": "Warning Status",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "ae45bb69cbf18e61",
+        "type": "rbe",
+        "z": "b2c61c7f661953be",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 490,
+        "y": 120,
+        "wires": [
+            [
+                "e4936103c8073f7b"
+            ]
+        ]
+    },
+    {
+        "id": "0b632eff9be58931",
+        "type": "debug",
+        "z": "b2c61c7f661953be",
+        "name": "Failure risk",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1050,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "2c5ca6eda52d1dff",
+        "type": "change",
+        "z": "b2c61c7f661953be",
+        "name": "Create failure alert(#1)",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "🚨 ALERT: Machine 01 is at FAILURE RISK!",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 660,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "176142681ad1a855",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Prepare sensor data",
+        "func": "const parts = msg.topic.split(\"/\");\n\n// Παίρνουμε πάντα τα τελευταία 2 κομμάτια του topic\nconst sensorType = parts[parts.length - 1];\nconst machineId = parts[parts.length - 2];\n\nconst allowedTopics = [\n    \"temperature\",\n    \"vibration\",\n    \"current\",\n    \"status\"\n];\n\n// Κόβουμε maintenance και οποιοδήποτε άλλο topic\nif (!allowedTopics.includes(sensorType)) {\n    return null;\n}\n\nmsg.machine_id = machineId;\nmsg.topic = sensorType;\n\nnode.warn({\n    machine_id: msg.machine_id,\n    topic: msg.topic,\n    payload: msg.payload\n});\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 180,
+        "wires": [
+            [
+                "82d33ffaaf0bef4f"
+            ]
+        ]
+    },
+    {
+        "id": "3117e711be2b3adc",
+        "type": "join",
+        "z": "b2c61c7f661953be",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": false,
+        "accumulate": false,
+        "timeout": "",
+        "count": "4",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "num",
+        "reduceFixup": "",
+        "x": 850,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1deace3e161f080d",
+        "type": "debug",
+        "z": "b2c61c7f661953be",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "6cca942fbc6f39e5",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Build SQL Insert",
+        "func": "node.warn({\n    top_level_machine_id: msg.machine_id,\n    payload_machine_id: msg.payload?.machine_id,\n    payload: msg.payload\n});\n\nmsg.params = [\n    msg.payload.temperature,\n    msg.payload.vibration,\n    msg.payload.current,\n    msg.payload.status,\n    msg.payload.predicted_status,\n    msg.machine_id\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 860,
+        "y": 280,
+        "wires": [
+            [
+                "5eb06a67dae8ed8d"
+            ]
+        ]
+    },
+    {
+        "id": "5eb06a67dae8ed8d",
+        "type": "postgresql",
+        "z": "b2c61c7f661953be",
+        "name": "Save Sensor Reading",
+        "query": "INSERT INTO sensor_readings\n(\n    timestamp,\n    temperature,\n    vibration,\n    current,\n    status,\n    predicted_status,\n    machine_id\n)\nVALUES (NOW(), $1, $2, $3, $4, $5, $6);",
+        "postgreSQLConfig": "916899e6d61ccddd",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1080,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8773a8bf179d9f62",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Prepare ML Request",
+        "func": "// Keep the original sensor data\nmsg.sensorData = {\n    temperature: msg.payload.temperature,\n    vibration: msg.payload.vibration,\n    current: msg.payload.current,\n    status: msg.payload.status\n};\n\n// Create the body that will be sent to the ML API\nmsg.payload = {\n    temperature: msg.sensorData.temperature,\n    vibration: msg.sensorData.vibration,\n    current: msg.sensorData.current\n};\n\nmsg.headers = {\n    \"Content-Type\": \"application/json\"\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 240,
+        "wires": [
+            [
+                "67e49b5089d1802e"
+            ]
+        ]
+    },
+    {
+        "id": "67e49b5089d1802e",
+        "type": "http request",
+        "z": "b2c61c7f661953be",
+        "name": "",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8000/predict",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1070,
+        "y": 240,
+        "wires": [
+            [
+                "a50c14bf5297f202"
+            ]
+        ]
+    },
+    {
+        "id": "e27b18937c8d50e4",
+        "type": "debug",
+        "z": "b2c61c7f661953be",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "a50c14bf5297f202",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Combine ML Prediction",
+        "func": "msg.payload = {\n    temperature: msg.sensorData.temperature,\n    vibration: msg.sensorData.vibration,\n    current: msg.sensorData.current,\n    status: msg.sensorData.status,\n    predicted_status: msg.payload.prediction\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1270,
+        "y": 240,
+        "wires": [
+            [
+                "6cca942fbc6f39e5",
+                "e27b18937c8d50e4",
+                "f4702bfdc2b1b202"
+            ]
+        ]
+    },
+    {
+        "id": "d43d5c0cfeb4c4d4",
+        "type": "switch",
+        "z": "b2c61c7f661953be",
+        "name": "ML Prediction Switch",
+        "property": "payload.predicted_status",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "NORMAL",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "WARNING",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "FAILURE RISK",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 800,
+        "y": 520,
+        "wires": [
+            [],
+            [],
+            [
+                "9520feab657c639b"
+            ]
+        ]
+    },
+    {
+        "id": "c002a60f04348ee4",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Create ML Failure Alert",
+        "func": "const data = msg.payload;\n\nconst machineId = msg.machine_id || data.machine_id || \"unknown\";\n\nmsg.machine_id = machineId;\n\nmsg.payload = {\n    machine_id: machineId,\n    alert_type: \"ML FAILURE RISK\",\n    message: `${machineId} predicted failure risk detected`,\n    temperature: data.temperature,\n    vibration: data.vibration,\n    current: data.current,\n    predicted_status: data.predicted_status,\n    timestamp: new Date().toISOString()\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1140,
+        "y": 520,
+        "wires": [
+            [
+                "9294e387d5b7274a",
+                "ba3237ed4ca425dc"
+            ]
+        ]
+    },
+    {
+        "id": "9294e387d5b7274a",
+        "type": "debug",
+        "z": "b2c61c7f661953be",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1300,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "ba3237ed4ca425dc",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Build ML Alert SQL",
+        "func": "msg.params = [\n    msg.payload.alert_type,\n    msg.payload.message,\n    msg.payload.temperature,\n    msg.payload.vibration,\n    msg.payload.current,\n    msg.payload.predicted_status,\n    msg.payload.machine_id\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1250,
+        "y": 580,
+        "wires": [
+            [
+                "e705f2350e516dae"
+            ]
+        ]
+    },
+    {
+        "id": "e705f2350e516dae",
+        "type": "postgresql",
+        "z": "b2c61c7f661953be",
+        "name": "Save ML Alert",
+        "query": "INSERT INTO ml_alerts\n(alert_type, message, temperature, vibration, current, predicted_status, machine_id)\nVALUES ($1, $2, $3, $4, $5, $6, $7);",
+        "postgreSQLConfig": "916899e6d61ccddd",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1240,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "22dd4c4b544a1522",
+        "type": "inject",
+        "z": "b2c61c7f661953be",
+        "name": "WARNING",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "factory/machine01/maintenance",
+        "payload": "RESET",
+        "payloadType": "str",
+        "x": 1220,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "de4be423678e13ae",
+        "type": "inject",
+        "z": "b2c61c7f661953be",
+        "name": "FAILURE RISK",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"predicted_status\":\"FAILURE RISK\",\"temperature\":75,\"vibration\":0.8,\"current\":9.5}",
+        "payloadType": "json",
+        "x": 1020,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f4702bfdc2b1b202",
+        "type": "rbe",
+        "z": "b2c61c7f661953be",
+        "name": "filter 2",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": false,
+        "property": "payload.predicted_status",
+        "topi": "topic",
+        "x": 830,
+        "y": 420,
+        "wires": [
+            [
+                "d43d5c0cfeb4c4d4"
+            ]
+        ]
+    },
+    {
+        "id": "3f7bf71abaeb7f87",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Prepare Predictive Features",
+        "func": "let history = context.get(\"sensorHistory\") || [];\n\nhistory.push({\n    temperature: Number(msg.payload.temperature),\n    vibration: Number(msg.payload.vibration),\n    current: Number(msg.payload.current)\n});\n\n// Κρατάμε μόνο τα τελευταία 11 readings\nif (history.length > 11) {\n    history.shift();\n}\n\ncontext.set(\"sensorHistory\", history);\n\n// Δεν έχουμε αρκετό history ακόμα\nif (history.length < 11) {\n    return null;\n}\n\nlet currentReading = history[history.length - 1];\n\n// Τα προηγούμενα 10 readings\nlet past = history.slice(0, 10);\n\nlet tempAvg =\n    past.reduce((sum, r) => sum + r.temperature, 0) / 10;\n\nlet vibrationAvg =\n    past.reduce((sum, r) => sum + r.vibration, 0) / 10;\n\nlet currentAvg =\n    past.reduce((sum, r) => sum + r.current, 0) / 10;\n\n// Κρατάμε το αρχικό rule-based status\nmsg.originalStatus = msg.payload.status;\n\nmsg.payload = {\n    temperature: currentReading.temperature,\n    vibration: currentReading.vibration,\n    current: currentReading.current,\n\n    temp_change_10:\n        currentReading.temperature - past[0].temperature,\n\n    vibration_change_10:\n        currentReading.vibration - past[0].vibration,\n\n    current_change_10:\n        currentReading.current - past[0].current,\n\n    temp_avg_10: tempAvg,\n    vibration_avg_10: vibrationAvg,\n    current_avg_10: currentAvg\n};\n\nmsg.predictiveFeatures = { ...msg.payload };\n\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 260,
+        "wires": [
+            [
+                "82bbffbdb5748fe4"
+            ]
+        ]
+    },
+    {
+        "id": "11f9cd94593120f6",
+        "type": "debug",
+        "z": "b2c61c7f661953be",
+        "name": "debug future prediction",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "82bbffbdb5748fe4",
+        "type": "http request",
+        "z": "b2c61c7f661953be",
+        "name": "Predict Failure API",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8000/predict-failure",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 290,
+        "y": 320,
+        "wires": [
+            [
+                "bb385b4c7839c394"
+            ]
+        ]
+    },
+    {
+        "id": "bb385b4c7839c394",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Combine Predictive Result",
+        "func": "let predictiveState;\n\nif (msg.originalStatus === \"FAILURE RISK\") {\n    predictiveState = \"ALREADY FAILED\";\n} else if (msg.payload.future_failure === 1) {\n    predictiveState = \"PREDICTED FAILURE\";\n} else {\n    predictiveState = \"NO IMMINENT FAILURE\";\n}\n\nmsg.payload = {\n    temperature: msg.predictiveFeatures.temperature,\n    vibration: msg.predictiveFeatures.vibration,\n    current: msg.predictiveFeatures.current,\n    current_status: msg.originalStatus,\n    future_failure: msg.payload.future_failure,\n    failure_probability: msg.payload.failure_probability,\n    predictive_state: predictiveState\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 380,
+        "wires": [
+            [
+                "e65394bf26b4dd0c",
+                "11f9cd94593120f6"
+            ]
+        ]
+    },
+    {
+        "id": "e65394bf26b4dd0c",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Build Predictive SQL",
+        "func": "msg.params = [\n    msg.payload.temperature,\n    msg.payload.vibration,\n    msg.payload.current,\n    msg.payload.current_status,\n    msg.payload.future_failure,\n    msg.payload.failure_probability,\n    msg.payload.predictive_state,\n    msg.machine_id\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 440,
+        "wires": [
+            [
+                "94f0653914b6cdca"
+            ]
+        ]
+    },
+    {
+        "id": "94f0653914b6cdca",
+        "type": "postgresql",
+        "z": "b2c61c7f661953be",
+        "name": "Save Predictive Reading",
+        "query": "INSERT INTO predictive_readings\n(\n    temperature,\n    vibration,\n    current,\n    current_status,\n    future_failure,\n    failure_probability,\n    predictive_state,\n    machine_id\n)\nVALUES ($1, $2, $3, $4, $5, $6, $7, $8);",
+        "postgreSQLConfig": "916899e6d61ccddd",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 310,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "987d16d5eedb2c78",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Build Maintenance SQL",
+        "func": "const parts = msg.topic.split(\"/\");\n\n// factory/machine02/maintenance\nconst machineId = parts[parts.length - 2];\n\nmsg.params = [\n    machineId,\n    msg.payload,\n    \"Maintenance performed - machine reset\"\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 60,
+        "wires": [
+            [
+                "0dfc027c12641ab0"
+            ]
+        ]
+    },
+    {
+        "id": "0dfc027c12641ab0",
+        "type": "postgresql",
+        "z": "b2c61c7f661953be",
+        "name": "Save Maintenance Event",
+        "query": "INSERT INTO maintenance_events\n(machine_id, event_type, message)\nVALUES ($1, $2, $3);",
+        "postgreSQLConfig": "916899e6d61ccddd",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 790,
+        "y": 20,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "82d33ffaaf0bef4f",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Aggregate Machine Reading",
+        "func": "const machineId = msg.machine_id;\nconst sensorType = msg.topic;\n\nlet machines = context.get(\"machines\") || {};\n\nif (!machines[machineId]) {\n    machines[machineId] = {};\n}\n\nmachines[machineId][sensorType] = msg.payload;\n\ncontext.set(\"machines\", machines);\n\nconst data = machines[machineId];\n\n// Περιμένουμε να έχουμε πλήρες reading\nif (\n    data.temperature === undefined ||\n    data.vibration === undefined ||\n    data.current === undefined ||\n    data.status === undefined\n) {\n    return null;\n}\n\n// Το simulator στέλνει:\n// temperature → vibration → current → status\n// Άρα εκπέμπουμε μόνο όταν φτάσει το status.\nif (sensorType !== \"status\") {\n    return null;\n}\n\nmsg.payload = {\n    machine_id: machineId,\n    temperature: Number(data.temperature),\n    vibration: Number(data.vibration),\n    current: Number(data.current),\n    status: data.status\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 180,
+        "wires": [
+            [
+                "1deace3e161f080d",
+                "8773a8bf179d9f62",
+                "3f7bf71abaeb7f87"
+            ]
+        ]
+    },
+    {
+        "id": "298d0ee14d5db54a",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Create Failure Alert",
+        "func": "const parts = msg.topic.split(\"/\");\nconst machineId = msg.machine_id || parts[1];\n\nmsg.machine_id = machineId;\nmsg.payload = `🚨 ALERT: ${machineId} is at FAILURE RISK`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 160,
+        "wires": [
+            [
+                "0b632eff9be58931"
+            ]
+        ]
+    },
+    {
+        "id": "9520feab657c639b",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Filter New ML Failure Event",
+        "func": "const machineId =\n    msg.machine_id ||\n    msg.payload?.machine_id ||\n    \"unknown\";\n\nconst currentPrediction = msg.payload?.predicted_status;\n\n// Αποθηκεύουμε προηγούμενη predictive κατάσταση ανά machine\nlet states = context.get(\"ml_states\") || {};\n\nconst previousPrediction = states[machineId];\n\n// Ενημερώνουμε state\nstates[machineId] = currentPrediction;\ncontext.set(\"ml_states\", states);\n\n// Alert μόνο όταν ΜΠΑΙΝΟΥΜΕ σε FAILURE RISK\nif (\n    currentPrediction === \"FAILURE RISK\" &&\n    previousPrediction !== \"FAILURE RISK\"\n) {\n    return msg;\n}\n\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 960,
+        "y": 580,
+        "wires": [
+            [
+                "c002a60f04348ee4"
+            ]
+        ]
+    },
+    {
+        "id": "22afef3778458597",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "916899e6d61ccddd",
+        "type": "postgreSQLConfig",
+        "name": "",
+        "host": "localhost",
+        "hostFieldType": "str",
+        "port": 5432,
+        "portFieldType": "num",
+        "database": "predictive_maintenance",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": 10,
+        "maxFieldType": "num",
+        "idle": 1000,
+        "idleFieldType": "num",
+        "connectionTimeout": 10000,
+        "connectionTimeoutFieldType": "num",
+        "userFieldType": "cred",
+        "userEnv": "",
+        "passwordFieldType": "cred",
+        "passwordEnv": ""
+    },
+    {
+        "id": "1f79ee60e907e589",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-postgresql": "0.16.2"
+        }
+    }
+]
