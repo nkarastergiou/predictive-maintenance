@@ -8,6 +8,13 @@ import sys
 
 MACHINE_ID = sys.argv[1] if len(sys.argv) > 1 else "machine01"
 
+VALID_MACHINES = ["machine01", "machine02", "machine03"]
+
+if MACHINE_ID not in VALID_MACHINES:
+    print(f"Invalid machine ID: {MACHINE_ID}")
+    print("Valid options: machine01, machine02, machine03")
+    sys.exit(1)
+
 MACHINE_PROFILES = {
     "machine01": {
         "temperature_start": 42.0,
