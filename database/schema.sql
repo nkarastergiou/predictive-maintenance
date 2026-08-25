@@ -53,3 +53,19 @@ ON ml_alerts (machine_id, timestamp DESC);
 
 CREATE INDEX IF NOT EXISTS idx_maintenance_events_machine_time
 ON maintenance_events (machine_id, timestamp DESC);
+
+CREATE TABLE IF NOT EXISTS maintenance_assessments (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMP NOT NULL DEFAULT NOW(),
+    machine_id VARCHAR(20) NOT NULL,
+    health_score INTEGER NOT NULL,
+    maintenance_priority VARCHAR(20) NOT NULL,
+    risk_driver VARCHAR(30) NOT NULL,
+    recommended_action TEXT NOT NULL,
+    failure_probability DOUBLE PRECISION NOT NULL,
+    current_status VARCHAR(30) NOT NULL,
+    predictive_state VARCHAR(30) NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_maintenance_assessments_machine_time
+ON maintenance_assessments (machine_id, timestamp DESC);

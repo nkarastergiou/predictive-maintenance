@@ -4,18 +4,18 @@
   "metadata": {
     "name": "adgrn72",
     "namespace": "default",
-    "uid": "a30525a8-8908-4022-8595-f1af4618554a",
-    "resourceVersion": "1787476371436008",
-    "generation": 60,
-    "creationTimestamp": "2026-08-19T17:08:59Z",
+    "uid": "f9aaa17f-f583-497c-9f41-77f6a6bf3b94",
+    "resourceVersion": "1787672520876006",
+    "generation": 24,
+    "creationTimestamp": "2026-08-25T13:22:31Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "453648800387072"
+      "grafana.app/deprecatedInternalID": "2570984789016576"
     },
     "annotations": {
-      "grafana.app/createdBy": "user:cfvo54volzj0gb",
+      "grafana.app/createdBy": "user:dfw8wdd9n2b5sd",
       "grafana.app/saved-from-ui": "Grafana v13.2.0 (f681b1359f)",
-      "grafana.app/updatedBy": "user:cfvo54volzj0gb",
-      "grafana.app/updatedTimestamp": "2026-08-23T09:12:51Z"
+      "grafana.app/updatedBy": "user:dfw8wdd9n2b5sd",
+      "grafana.app/updatedTimestamp": "2026-08-25T15:42:00Z"
     }
   },
   "spec": {
@@ -62,7 +62,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -199,7 +199,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -314,7 +314,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -413,7 +413,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -550,7 +550,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -670,7 +670,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -769,7 +769,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -872,7 +872,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -976,7 +976,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -1113,7 +1113,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -1196,6 +1196,636 @@
           }
         }
       },
+      "panel-21": {
+        "kind": "Panel",
+        "spec": {
+          "id": 21,
+          "title": "Health Score",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cfw8yvulyu60wd"
+                      },
+                      "spec": {
+                        "dataset": "predictive_maintenance",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT\r\n    health_score\r\nFROM maintenance_assessments\r\nWHERE machine_id = '$machine'\r\n  AND $__timeFilter(\r\n      timestamp AT TIME ZONE 'Europe/Athens'\r\n  )\r\nORDER BY timestamp DESC\r\nLIMIT 1;",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "gauge",
+            "version": "13.2.0",
+            "spec": {
+              "options": {
+                "barShape": "flat",
+                "barWidthFactor": 0.54,
+                "effects": {
+                  "barGlow": false,
+                  "centerGlow": false,
+                  "gradient": true
+                },
+                "endpointMarker": "point",
+                "minVizHeight": 75,
+                "minVizWidth": 75,
+                "orientation": "auto",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "segmentCount": 1,
+                "segmentSpacing": 0.3,
+                "shape": "gauge",
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "sizing": "auto",
+                "sparkline": true,
+                "textMode": "auto"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "min": 0,
+                  "max": 100,
+                  "thresholds": {
+                    "mode": "percentage",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "dark-red"
+                      },
+                      {
+                        "value": 26,
+                        "color": "dark-orange"
+                      },
+                      {
+                        "value": 51,
+                        "color": "yellow"
+                      },
+                      {
+                        "value": 76,
+                        "color": "dark-green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-22": {
+        "kind": "Panel",
+        "spec": {
+          "id": 22,
+          "title": "Maintenance Priority",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cfw8yvulyu60wd"
+                      },
+                      "spec": {
+                        "dataset": "predictive_maintenance",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT\r\n    machine_id,\r\n    maintenance_priority,\r\n    timestamp\r\nFROM maintenance_assessments\r\nWHERE machine_id = '$machine'\r\nORDER BY timestamp DESC\r\nLIMIT 5;",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.0",
+            "spec": {
+              "options": {
+                "colorMode": "background_solid",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "/^maintenance_priority$/",
+                  "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "mappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "CRITICAL": {
+                          "text": "CRITICAL",
+                          "color": "dark-red",
+                          "index": 3
+                        },
+                        "HIGH": {
+                          "text": "HIGH",
+                          "color": "dark-orange",
+                          "index": 2
+                        },
+                        "LOW": {
+                          "text": "LOW",
+                          "color": "dark-green",
+                          "index": 0
+                        },
+                        "MEDIUM": {
+                          "text": "MEDIUM",
+                          "color": "yellow",
+                          "index": 1
+                        }
+                      }
+                    }
+                  ],
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-23": {
+        "kind": "Panel",
+        "spec": {
+          "id": 23,
+          "title": "Primary Risk Driver",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cfw8yvulyu60wd"
+                      },
+                      "spec": {
+                        "dataset": "predictive_maintenance",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT\r\n    risk_driver\r\nFROM maintenance_assessments\r\nWHERE machine_id = '$machine'\r\nORDER BY timestamp DESC\r\nLIMIT 1;",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.0",
+            "spec": {
+              "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "/^risk_driver$/",
+                  "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "mappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "CURRENT": {
+                          "text": "CURRENT",
+                          "color": "dark-orange",
+                          "index": 3
+                        },
+                        "MULTIPLE FACTORS": {
+                          "text": "MULTIPLE FACTORS",
+                          "color": "dark-red",
+                          "index": 4
+                        },
+                        "NONE": {
+                          "text": "NONE",
+                          "color": "dark-green",
+                          "index": 0
+                        },
+                        "TEMPERATURE": {
+                          "text": "TEMPERATURE",
+                          "color": "dark-orange",
+                          "index": 1
+                        },
+                        "VIBRATION": {
+                          "text": "VIBRATION",
+                          "color": "dark-orange",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ],
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-24": {
+        "kind": "Panel",
+        "spec": {
+          "id": 24,
+          "title": "Recommended Action",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cfw8yvulyu60wd"
+                      },
+                      "spec": {
+                        "dataset": "predictive_maintenance",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT\r\n    recommended_action\r\nFROM maintenance_assessments\r\nWHERE machine_id = '$machine'\r\nORDER BY timestamp DESC\r\nLIMIT 1;",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.0",
+            "spec": {
+              "options": {
+                "colorMode": "none",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "/^recommended_action$/",
+                  "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-25": {
+        "kind": "Panel",
+        "spec": {
+          "id": 25,
+          "title": "Health Score History",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cfw8yvulyu60wd"
+                      },
+                      "spec": {
+                        "dataset": "predictive_maintenance",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT\r\n    timestamp AT TIME ZONE 'Europe/Athens' AS \"time\",\r\n    health_score AS \"Health Score\"\r\nFROM maintenance_assessments\r\nWHERE machine_id = '$machine'\r\n  AND $__timeFilter(\r\n      timestamp AT TIME ZONE 'Europe/Athens'\r\n  )\r\nORDER BY timestamp ASC;",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.0",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "min": 0,
+                  "max": 100,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "dark-red"
+                      },
+                      {
+                        "value": 26,
+                        "color": "dark-orange"
+                      },
+                      {
+                        "value": 51,
+                        "color": "yellow"
+                      },
+                      {
+                        "value": 76,
+                        "color": "dark-green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "continuous-BlYlRd",
+                    "seriesBy": "last"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 19,
+                    "gradientMode": "scheme",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "smooth",
+                    "lineStyle": {
+                      "fill": "solid"
+                    },
+                    "lineWidth": 2,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "never",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
       "panel-3": {
         "kind": "Panel",
         "spec": {
@@ -1215,7 +1845,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -1352,7 +1982,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -1476,7 +2106,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -1578,7 +2208,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -1680,7 +2310,7 @@
                       "group": "grafana-postgresql-datasource",
                       "version": "v0",
                       "datasource": {
-                        "name": "efvo610ddbbi8c"
+                        "name": "cfw8yvulyu60wd"
                       },
                       "spec": {
                         "dataset": "predictive_maintenance",
@@ -1985,10 +2615,75 @@
               "x": 0,
               "y": 17,
               "width": 12,
-              "height": 7,
+              "height": 5,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-17"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 22,
+              "width": 8,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-21"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 8,
+              "y": 22,
+              "width": 16,
+              "height": 3,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-24"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 8,
+              "y": 25,
+              "width": 7,
+              "height": 4,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-22"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 15,
+              "y": 25,
+              "width": 9,
+              "height": 4,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-23"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 29,
+              "width": 12,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-25"
               }
             }
           }
@@ -2037,7 +2732,7 @@
             "group": "grafana-postgresql-datasource",
             "version": "v0",
             "datasource": {
-              "name": "efvo610ddbbi8c"
+              "name": "cfw8yvulyu60wd"
             },
             "spec": {
               "dataset": "predictive_maintenance",

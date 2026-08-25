@@ -268,7 +268,7 @@
         "type": "function",
         "z": "b2c61c7f661953be",
         "name": "Build SQL Insert",
-        "func": "node.warn({\n    top_level_machine_id: msg.machine_id,\n    payload_machine_id: msg.payload?.machine_id,\n    payload: msg.payload\n});\n\nmsg.params = [\n    msg.payload.temperature,\n    msg.payload.vibration,\n    msg.payload.current,\n    msg.payload.status,\n    msg.payload.predicted_status,\n    msg.machine_id\n];\n\nreturn msg;",
+        "func": "msg.params = [\n    msg.payload.temperature,\n    msg.payload.vibration,\n    msg.payload.current,\n    msg.payload.status,\n    msg.payload.predicted_status,\n    msg.machine_id\n];\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -281,22 +281,6 @@
             [
                 "5eb06a67dae8ed8d"
             ]
-        ]
-    },
-    {
-        "id": "5eb06a67dae8ed8d",
-        "type": "postgresql",
-        "z": "b2c61c7f661953be",
-        "name": "Save Sensor Reading",
-        "query": "INSERT INTO sensor_readings\n(\n    timestamp,\n    temperature,\n    vibration,\n    current,\n    status,\n    predicted_status,\n    machine_id\n)\nVALUES (NOW(), $1, $2, $3, $4, $5, $6);",
-        "postgreSQLConfig": "916899e6d61ccddd",
-        "split": false,
-        "rowsPerMsg": 1,
-        "outputs": 1,
-        "x": 1080,
-        "y": 280,
-        "wires": [
-            []
         ]
     },
     {
@@ -476,22 +460,6 @@
         ]
     },
     {
-        "id": "e705f2350e516dae",
-        "type": "postgresql",
-        "z": "b2c61c7f661953be",
-        "name": "Save ML Alert",
-        "query": "INSERT INTO ml_alerts\n(alert_type, message, temperature, vibration, current, predicted_status, machine_id)\nVALUES ($1, $2, $3, $4, $5, $6, $7);",
-        "postgreSQLConfig": "916899e6d61ccddd",
-        "split": false,
-        "rowsPerMsg": 1,
-        "outputs": 1,
-        "x": 1240,
-        "y": 620,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "22dd4c4b544a1522",
         "type": "inject",
         "z": "b2c61c7f661953be",
@@ -566,7 +534,7 @@
         "type": "function",
         "z": "b2c61c7f661953be",
         "name": "Prepare Predictive Features",
-        "func": "let history = context.get(\"sensorHistory\") || [];\n\nhistory.push({\n    temperature: Number(msg.payload.temperature),\n    vibration: Number(msg.payload.vibration),\n    current: Number(msg.payload.current)\n});\n\n// Κρατάμε μόνο τα τελευταία 11 readings\nif (history.length > 11) {\n    history.shift();\n}\n\ncontext.set(\"sensorHistory\", history);\n\n// Δεν έχουμε αρκετό history ακόμα\nif (history.length < 11) {\n    return null;\n}\n\nlet currentReading = history[history.length - 1];\n\n// Τα προηγούμενα 10 readings\nlet past = history.slice(0, 10);\n\nlet tempAvg =\n    past.reduce((sum, r) => sum + r.temperature, 0) / 10;\n\nlet vibrationAvg =\n    past.reduce((sum, r) => sum + r.vibration, 0) / 10;\n\nlet currentAvg =\n    past.reduce((sum, r) => sum + r.current, 0) / 10;\n\n// Κρατάμε το αρχικό rule-based status\nmsg.originalStatus = msg.payload.status;\n\nmsg.payload = {\n    temperature: currentReading.temperature,\n    vibration: currentReading.vibration,\n    current: currentReading.current,\n\n    temp_change_10:\n        currentReading.temperature - past[0].temperature,\n\n    vibration_change_10:\n        currentReading.vibration - past[0].vibration,\n\n    current_change_10:\n        currentReading.current - past[0].current,\n\n    temp_avg_10: tempAvg,\n    vibration_avg_10: vibrationAvg,\n    current_avg_10: currentAvg\n};\n\nmsg.predictiveFeatures = { ...msg.payload };\n\n\n\nreturn msg;",
+        "func": "const machineId =\n    msg.payload.machine_id ||\n    msg.machine_id;\n\nif (!machineId) {\n    node.warn(\"Missing machine_id\");\n    return null;\n}\n\nconst currentStatus = msg.payload.status;\n\n// Παίρνουμε ξεχωριστό history για κάθε machine\nlet allHistory = context.get(\"sensorHistoryByMachine\") || {};\n\nlet history = allHistory[machineId] || [];\n\nhistory.push({\n    temperature: Number(msg.payload.temperature),\n    vibration: Number(msg.payload.vibration),\n    current: Number(msg.payload.current)\n});\n\n// Κρατάμε μόνο τα τελευταία 11 readings\nif (history.length > 11) {\n    history.shift();\n}\n\n// Αποθηκεύουμε το history του συγκεκριμένου machine\nallHistory[machineId] = history;\ncontext.set(\"sensorHistoryByMachine\", allHistory);\n\n// Κρατάμε πληροφορίες που θα χρειαστούν μετά\nmsg.machine_id = machineId;\nmsg.originalStatus = currentStatus;\n\n// Δεν έχουμε αρκετό history ακόμα\nif (history.length < 11) {\n    return null;\n}\n\nconst currentReading = history[history.length - 1];\n\n// Τα προηγούμενα 10 readings\nconst past = history.slice(0, 10);\n\nconst tempAvg =\n    past.reduce((sum, r) => sum + r.temperature, 0) / 10;\n\nconst vibrationAvg =\n    past.reduce((sum, r) => sum + r.vibration, 0) / 10;\n\nconst currentAvg =\n    past.reduce((sum, r) => sum + r.current, 0) / 10;\n\nmsg.payload = {\n    temperature: currentReading.temperature,\n    vibration: currentReading.vibration,\n    current: currentReading.current,\n\n    temp_change_10:\n        currentReading.temperature - past[0].temperature,\n\n    vibration_change_10:\n        currentReading.vibration - past[0].vibration,\n\n    current_change_10:\n        currentReading.current - past[0].current,\n\n    temp_avg_10: tempAvg,\n    vibration_avg_10: vibrationAvg,\n    current_avg_10: currentAvg,\n\n    current_status: currentStatus\n};\n\n// Κρατάμε αντίγραφο για χρήση μετά το HTTP request\nmsg.predictiveFeatures = { ...msg.payload };\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -594,8 +562,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 560,
-        "y": 440,
+        "x": 600,
+        "y": 380,
         "wires": []
     },
     {
@@ -627,7 +595,7 @@
         "type": "function",
         "z": "b2c61c7f661953be",
         "name": "Combine Predictive Result",
-        "func": "let predictiveState;\n\nif (msg.originalStatus === \"FAILURE RISK\") {\n    predictiveState = \"ALREADY FAILED\";\n} else if (msg.payload.future_failure === 1) {\n    predictiveState = \"PREDICTED FAILURE\";\n} else {\n    predictiveState = \"NO IMMINENT FAILURE\";\n}\n\nmsg.payload = {\n    temperature: msg.predictiveFeatures.temperature,\n    vibration: msg.predictiveFeatures.vibration,\n    current: msg.predictiveFeatures.current,\n    current_status: msg.originalStatus,\n    future_failure: msg.payload.future_failure,\n    failure_probability: msg.payload.failure_probability,\n    predictive_state: predictiveState\n};\n\nreturn msg;",
+        "func": "const response = msg.payload;\n\nmsg.payload = {\n    machine_id: msg.machine_id,\n\n    temperature: msg.predictiveFeatures.temperature,\n    vibration: msg.predictiveFeatures.vibration,\n    current: msg.predictiveFeatures.current,\n\n    current_status: msg.originalStatus,\n\n    future_failure: response.future_failure,\n    failure_probability: response.failure_probability,\n    predictive_state: response.predictive_state,\n\n    health_score: response.maintenance.health_score,\n    maintenance_priority:\n        response.maintenance.maintenance_priority,\n\n    risk_driver:\n        response.maintenance.risk_driver,\n\n    recommended_action:\n        response.maintenance.recommended_action\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -639,7 +607,8 @@
         "wires": [
             [
                 "e65394bf26b4dd0c",
-                "11f9cd94593120f6"
+                "11f9cd94593120f6",
+                "d0ea188d5088c8c2"
             ]
         ]
     },
@@ -655,28 +624,12 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 300,
-        "y": 440,
+        "x": 120,
+        "y": 420,
         "wires": [
             [
                 "94f0653914b6cdca"
             ]
-        ]
-    },
-    {
-        "id": "94f0653914b6cdca",
-        "type": "postgresql",
-        "z": "b2c61c7f661953be",
-        "name": "Save Predictive Reading",
-        "query": "INSERT INTO predictive_readings\n(\n    temperature,\n    vibration,\n    current,\n    current_status,\n    future_failure,\n    failure_probability,\n    predictive_state,\n    machine_id\n)\nVALUES ($1, $2, $3, $4, $5, $6, $7, $8);",
-        "postgreSQLConfig": "916899e6d61ccddd",
-        "split": false,
-        "rowsPerMsg": 1,
-        "outputs": 1,
-        "x": 310,
-        "y": 480,
-        "wires": [
-            []
         ]
     },
     {
@@ -697,22 +650,6 @@
             [
                 "0dfc027c12641ab0"
             ]
-        ]
-    },
-    {
-        "id": "0dfc027c12641ab0",
-        "type": "postgresql",
-        "z": "b2c61c7f661953be",
-        "name": "Save Maintenance Event",
-        "query": "INSERT INTO maintenance_events\n(machine_id, event_type, message)\nVALUES ($1, $2, $3);",
-        "postgreSQLConfig": "916899e6d61ccddd",
-        "split": false,
-        "rowsPerMsg": 1,
-        "outputs": 1,
-        "x": 790,
-        "y": 20,
-        "wires": [
-            []
         ]
     },
     {
@@ -778,6 +715,123 @@
         ]
     },
     {
+        "id": "5eb06a67dae8ed8d",
+        "type": "postgresql",
+        "z": "b2c61c7f661953be",
+        "name": "Save Sensor Reading",
+        "query": "INSERT INTO sensor_readings\n(\n    timestamp,\n    temperature,\n    vibration,\n    current,\n    status,\n    predicted_status,\n    machine_id\n)\nVALUES (NOW(), $1, $2, $3, $4, $5, $6);",
+        "postgreSQLConfig": "916899e6d61ccddd",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1080,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e705f2350e516dae",
+        "type": "postgresql",
+        "z": "b2c61c7f661953be",
+        "name": "Save ML Alert",
+        "query": "INSERT INTO ml_alerts\n(alert_type, message, temperature, vibration, current, predicted_status, machine_id)\nVALUES ($1, $2, $3, $4, $5, $6, $7);",
+        "postgreSQLConfig": "916899e6d61ccddd",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1240,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "94f0653914b6cdca",
+        "type": "postgresql",
+        "z": "b2c61c7f661953be",
+        "name": "Save Predictive Reading",
+        "query": "INSERT INTO predictive_readings\n(\n    temperature,\n    vibration,\n    current,\n    current_status,\n    future_failure,\n    failure_probability,\n    predictive_state,\n    machine_id\n)\nVALUES ($1, $2, $3, $4, $5, $6, $7, $8);",
+        "postgreSQLConfig": "916899e6d61ccddd",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 130,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0dfc027c12641ab0",
+        "type": "postgresql",
+        "z": "b2c61c7f661953be",
+        "name": "Save Maintenance Event",
+        "query": "INSERT INTO maintenance_events\n(machine_id, event_type, message)\nVALUES ($1, $2, $3);",
+        "postgreSQLConfig": "916899e6d61ccddd",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 790,
+        "y": 20,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a6e8574286c95cd4",
+        "type": "debug",
+        "z": "b2c61c7f661953be",
+        "name": "complete msg object",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "d0ea188d5088c8c2",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Build Maintenance Assessment SQL",
+        "func": "msg.params = [\n    msg.payload.machine_id,\n    msg.payload.health_score,\n    msg.payload.maintenance_priority,\n    msg.payload.risk_driver,\n    msg.payload.recommended_action,\n    msg.payload.failure_probability,\n    msg.payload.current_status,\n    msg.payload.predictive_state\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 440,
+        "wires": [
+            [
+                "6e977d2aff56a777"
+            ]
+        ]
+    },
+    {
+        "id": "6e977d2aff56a777",
+        "type": "postgresql",
+        "z": "b2c61c7f661953be",
+        "name": "Save Maintenance Assessment",
+        "query": "INSERT INTO maintenance_assessments (\n    machine_id,\n    health_score,\n    maintenance_priority,\n    risk_driver,\n    recommended_action,\n    failure_probability,\n    current_status,\n    predictive_state\n)\nVALUES ($1, $2, $3, $4, $5, $6, $7, $8);",
+        "postgreSQLConfig": "916899e6d61ccddd",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 430,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
         "id": "22afef3778458597",
         "type": "mqtt-broker",
         "name": "",
@@ -834,7 +888,7 @@
         "passwordEnv": ""
     },
     {
-        "id": "1f79ee60e907e589",
+        "id": "33e2015d2ae4e9ad",
         "type": "global-config",
         "env": [],
         "modules": {
