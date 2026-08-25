@@ -1,6 +1,6 @@
 import random
 import csv
-
+import os
 
 def determine_status(temperature, vibration, current):
     if temperature >= 48 or vibration >= 0.28 or current >= 5.7:
@@ -43,6 +43,8 @@ def generate_sample(target_status):
 
 
 output_file = "data/training_data.csv"
+
+os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
 statuses = ["NORMAL", "WARNING", "FAILURE RISK"]
 

@@ -58,6 +58,8 @@ machine_failed = False
 
 csv_file = "data/sensor_data.csv"
 
+os.makedirs(os.path.dirname(csv_file), exist_ok=True)
+
 if not os.path.exists(csv_file):
     with open(csv_file, "w", newline="") as file:
         writer = csv.writer(file)

@@ -1,11 +1,14 @@
 import random
 import csv
+import os
 
 TOTAL_READINGS = 100000
 LOOKBACK = 10
 PREDICTION_HORIZON = 30
 
 output_file = "data/predictive_training_data.csv"
+
+os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
 
 def determine_status(temperature, vibration, current):
