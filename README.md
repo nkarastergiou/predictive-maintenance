@@ -702,3 +702,184 @@ Rather than demonstrating an isolated ML notebook or a standalone dashboard, the
 Developed as a portfolio project focused on:
 
 **Industrial IoT, Software Engineering, Data Engineering, Machine Learning, and Predictive Maintenance.**
+
+## Local Setup
+
+This section describes how to run the complete predictive maintenance system locally after cloning the repository.
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/nkarastergiou/predictive-maintenance.git
+cd predictive-maintenance
+```
+
+### 2. Create the Python environment
+
+Create a virtual environment:
+
+```bash
+py -m venv .venv
+```
+
+Activate it on Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Install the required Python dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configure PostgreSQL
+
+Create a PostgreSQL database named:
+
+```text
+predictive_maintenance
+```
+
+Run the database schema:
+
+```text
+database/schema.sql
+```
+
+This creates the required tables and indexes for:
+
+- sensor readings
+- predictive readings
+- ML alerts
+- maintenance events
+
+### 4. Start the MQTT broker
+
+The project uses Mosquitto as the local MQTT broker.
+
+Make sure Mosquitto is running on:
+
+```text
+localhost:1883
+```
+
+### 5. Import and start Node-RED
+
+Start Node-RED:
+
+```bash
+node-red
+```
+
+Open:
+
+```text
+http://localhost:1880
+```
+
+Import:
+
+```text
+node-red/flows.json
+```
+
+Configure the PostgreSQL nodes with the credentials of your local `predictive_maintenance` database.
+
+Verify that the MQTT nodes connect successfully to:
+
+```text
+localhost:1883
+```
+
+Then deploy the flow.
+
+### 6. Start the ML API
+
+From the project root with the virtual environment activated:
+
+```bash
+uvicorn ml.api:app --reload
+```
+
+The API will run at:
+
+```text
+http://127.0.0.1:8000
+```
+
+Interactive API documentation is available at:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+### 7. Start the machine simulators
+
+Run each simulated machine in a separate terminal:
+
+```bash
+python simulator/sensor_simulator.py machine01
+python simulator/sensor_simulator.py machine02
+python simulator/sensor_simulator.py machine03
+```
+
+The simulator automatically creates the local `data/` directory when required.
+
+Generated CSV datasets are excluded from Git and remain local to each installation.
+
+### 8. Configure Grafana
+
+Start Grafana and open:
+
+```text
+http://localhost:3000
+```
+
+Create a PostgreSQL datasource using:
+
+```text
+Host: localhost:5432
+Database: predictive_maintenance
+User: postgres
+SSL mode: disable
+```
+
+Use your local PostgreSQL password.
+
+Import the dashboards:
+
+```text
+grafana/fleet-overview.json
+grafana/machine-detail.json
+```
+
+After importing, map the dashboard panels and the `machine` dashboard variable to the local PostgreSQL datasource if required.
+
+### 9. Verify the pipeline
+
+The complete system should now operate as:
+
+```text
+Machine Simulators
+        ↓
+      MQTT
+        ↓
+     Node-RED
+        ↓
+   ML / FastAPI
+        ↓
+   PostgreSQL
+        ↓
+     Grafana
+```
+
+Verify that:
+
+- sensor readings are being generated
+- MQTT messages are received by Node-RED
+- sensor and predictive readings are stored in PostgreSQL
+- ML predictions are generated
+- maintenance events and alerts are recorded
+- Grafana dashboards display live machine data
