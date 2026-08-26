@@ -69,3 +69,20 @@ CREATE TABLE IF NOT EXISTS maintenance_assessments (
 
 CREATE INDEX IF NOT EXISTS idx_maintenance_assessments_machine_time
 ON maintenance_assessments (machine_id, timestamp DESC);
+
+CREATE TABLE IF NOT EXISTS maintenance_actions (
+    id SERIAL PRIMARY KEY,
+    machine_id VARCHAR(20) NOT NULL,
+    priority VARCHAR(20) NOT NULL,
+    risk_driver VARCHAR(30),
+    recommended_action TEXT NOT NULL,
+    health_score INTEGER,
+    failure_probability DOUBLE PRECISION,
+    status VARCHAR(20) NOT NULL DEFAULT 'OPEN',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    started_at TIMESTAMP,
+    completed_at TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_maintenance_actions_machine_status
+ON maintenance_actions (machine_id, status);

@@ -1,11 +1,75 @@
 [
     {
+        "id": "0a2496607df3ed37",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "b2c61c7f661953be",
         "type": "tab",
         "label": "Flow 1",
         "disabled": false,
         "info": "",
         "env": []
+    },
+    {
+        "id": "22afef3778458597",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "916899e6d61ccddd",
+        "type": "postgreSQLConfig",
+        "name": "",
+        "host": "localhost",
+        "hostFieldType": "str",
+        "port": 5432,
+        "portFieldType": "num",
+        "database": "predictive_maintenance",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": 10,
+        "maxFieldType": "num",
+        "idle": 1000,
+        "idleFieldType": "num",
+        "connectionTimeout": 10000,
+        "connectionTimeoutFieldType": "num",
+        "userFieldType": "cred",
+        "userEnv": "",
+        "passwordFieldType": "cred",
+        "passwordEnv": ""
     },
     {
         "id": "b5af831c8cf31a89",
@@ -175,31 +239,6 @@
         "wires": []
     },
     {
-        "id": "2c5ca6eda52d1dff",
-        "type": "change",
-        "z": "b2c61c7f661953be",
-        "name": "Create failure alert(#1)",
-        "rules": [
-            {
-                "t": "set",
-                "p": "payload",
-                "pt": "msg",
-                "to": "🚨 ALERT: Machine 01 is at FAILURE RISK!",
-                "tot": "str"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 660,
-        "y": 780,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "176142681ad1a855",
         "type": "function",
         "z": "b2c61c7f661953be",
@@ -217,33 +256,6 @@
             [
                 "82d33ffaaf0bef4f"
             ]
-        ]
-    },
-    {
-        "id": "3117e711be2b3adc",
-        "type": "join",
-        "z": "b2c61c7f661953be",
-        "name": "",
-        "mode": "custom",
-        "build": "object",
-        "property": "payload",
-        "propertyType": "msg",
-        "key": "topic",
-        "joiner": "\\n",
-        "joinerType": "str",
-        "useparts": false,
-        "accumulate": false,
-        "timeout": "",
-        "count": "4",
-        "reduceRight": false,
-        "reduceExp": "",
-        "reduceInit": "",
-        "reduceInitType": "num",
-        "reduceFixup": "",
-        "x": 850,
-        "y": 780,
-        "wires": [
-            []
         ]
     },
     {
@@ -361,7 +373,7 @@
             [
                 "6cca942fbc6f39e5",
                 "e27b18937c8d50e4",
-                "f4702bfdc2b1b202"
+                "d43d5c0cfeb4c4d4"
             ]
         ]
     },
@@ -392,11 +404,15 @@
         "checkall": "true",
         "repair": false,
         "outputs": 3,
-        "x": 800,
-        "y": 520,
+        "x": 840,
+        "y": 480,
         "wires": [
-            [],
-            [],
+            [
+                "9520feab657c639b"
+            ],
+            [
+                "9520feab657c639b"
+            ],
             [
                 "9520feab657c639b"
             ]
@@ -460,56 +476,6 @@
         ]
     },
     {
-        "id": "22dd4c4b544a1522",
-        "type": "inject",
-        "z": "b2c61c7f661953be",
-        "name": "WARNING",
-        "props": [
-            {
-                "p": "topic",
-                "vt": "str"
-            },
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "factory/machine01/maintenance",
-        "payload": "RESET",
-        "payloadType": "str",
-        "x": 1220,
-        "y": 780,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "de4be423678e13ae",
-        "type": "inject",
-        "z": "b2c61c7f661953be",
-        "name": "FAILURE RISK",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "{\"predicted_status\":\"FAILURE RISK\",\"temperature\":75,\"vibration\":0.8,\"current\":9.5}",
-        "payloadType": "json",
-        "x": 1020,
-        "y": 780,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "f4702bfdc2b1b202",
         "type": "rbe",
         "z": "b2c61c7f661953be",
@@ -521,12 +487,10 @@
         "septopics": false,
         "property": "payload.predicted_status",
         "topi": "topic",
-        "x": 830,
-        "y": 420,
+        "x": 710,
+        "y": 580,
         "wires": [
-            [
-                "d43d5c0cfeb4c4d4"
-            ]
+            []
         ]
     },
     {
@@ -608,7 +572,8 @@
             [
                 "e65394bf26b4dd0c",
                 "11f9cd94593120f6",
-                "d0ea188d5088c8c2"
+                "d0ea188d5088c8c2",
+                "875491eb53bf3962"
             ]
         ]
     },
@@ -625,7 +590,7 @@
         "finalize": "",
         "libs": [],
         "x": 120,
-        "y": 420,
+        "y": 440,
         "wires": [
             [
                 "94f0653914b6cdca"
@@ -644,7 +609,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 550,
+        "x": 570,
         "y": 60,
         "wires": [
             [
@@ -699,7 +664,7 @@
         "type": "function",
         "z": "b2c61c7f661953be",
         "name": "Filter New ML Failure Event",
-        "func": "const machineId =\n    msg.machine_id ||\n    msg.payload?.machine_id ||\n    \"unknown\";\n\nconst currentPrediction = msg.payload?.predicted_status;\n\n// Αποθηκεύουμε προηγούμενη predictive κατάσταση ανά machine\nlet states = context.get(\"ml_states\") || {};\n\nconst previousPrediction = states[machineId];\n\n// Ενημερώνουμε state\nstates[machineId] = currentPrediction;\ncontext.set(\"ml_states\", states);\n\n// Alert μόνο όταν ΜΠΑΙΝΟΥΜΕ σε FAILURE RISK\nif (\n    currentPrediction === \"FAILURE RISK\" &&\n    previousPrediction !== \"FAILURE RISK\"\n) {\n    return msg;\n}\n\nreturn null;",
+        "func": "const machineId = msg.machine_id || msg.payload.machine_id;\n\nif (!machineId) {\n    node.warn(\"Missing machine_id in ML failure event filter\");\n    return null;\n}\n\nconst currentPrediction = msg.payload.predicted_status;\n\nif (!currentPrediction) {\n    return null;\n}\n\nlet states = context.get(\"ml_states\");\n\nif (!states) {\n    states = {};\n}\n\nconst previousPrediction = states[machineId];\n\n// Update state for every prediction\nstates[machineId] = currentPrediction;\ncontext.set(\"ml_states\", states);\n\n// Alert only when machine enters FAILURE RISK\nif (\n    currentPrediction === \"FAILURE RISK\" &&\n    previousPrediction !== \"FAILURE RISK\"\n) {\n    return msg;\n}\n\nreturn null;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -757,7 +722,7 @@
         "rowsPerMsg": 1,
         "outputs": 1,
         "x": 130,
-        "y": 460,
+        "y": 480,
         "wires": [
             []
         ]
@@ -772,28 +737,11 @@
         "split": false,
         "rowsPerMsg": 1,
         "outputs": 1,
-        "x": 790,
+        "x": 810,
         "y": 20,
         "wires": [
             []
         ]
-    },
-    {
-        "id": "a6e8574286c95cd4",
-        "type": "debug",
-        "z": "b2c61c7f661953be",
-        "name": "complete msg object",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 300,
-        "y": 740,
-        "wires": []
     },
     {
         "id": "d0ea188d5088c8c2",
@@ -816,6 +764,46 @@
         ]
     },
     {
+        "id": "875491eb53bf3962",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Create Maintenance Action",
+        "func": "const machineId = msg.machine_id || msg.payload.machine_id;\nconst priority = msg.payload.maintenance_priority;\n\nif (priority !== \"HIGH\" && priority !== \"CRITICAL\") {\n    return null;\n}\n\nmsg.actionData = {\n    machine_id: machineId,\n    priority: priority,\n    risk_driver: msg.payload.risk_driver,\n    recommended_action: msg.payload.recommended_action,\n    health_score: msg.payload.health_score,\n    failure_probability: msg.payload.failure_probability\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 260,
+        "y": 580,
+        "wires": [
+            [
+                "bf7807aaa25f6272"
+            ]
+        ]
+    },
+    {
+        "id": "bf7807aaa25f6272",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Build Maintenance Action SQL",
+        "func": "const a = msg.actionData;\n\nmsg.params = [\n    a.machine_id,\n    a.priority,\n    a.risk_driver,\n    a.recommended_action,\n    a.health_score,\n    a.failure_probability\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 620,
+        "wires": [
+            [
+                "8a09d6923db47553"
+            ]
+        ]
+    },
+    {
         "id": "6e977d2aff56a777",
         "type": "postgresql",
         "z": "b2c61c7f661953be",
@@ -825,74 +813,148 @@
         "split": false,
         "rowsPerMsg": 1,
         "outputs": 1,
-        "x": 430,
-        "y": 480,
+        "x": 470,
+        "y": 500,
         "wires": [
             []
         ]
     },
     {
-        "id": "22afef3778458597",
-        "type": "mqtt-broker",
-        "name": "",
-        "broker": "localhost",
-        "port": 1883,
-        "clientid": "",
-        "autoConnect": true,
-        "usetls": false,
-        "protocolVersion": 4,
-        "keepalive": 60,
-        "cleansession": true,
-        "autoUnsubscribe": true,
-        "birthTopic": "",
-        "birthQos": "0",
-        "birthRetain": "false",
-        "birthPayload": "",
-        "birthMsg": {},
-        "closeTopic": "",
-        "closeQos": "0",
-        "closeRetain": "false",
-        "closePayload": "",
-        "closeMsg": {},
-        "willTopic": "",
-        "willQos": "0",
-        "willRetain": "false",
-        "willPayload": "",
-        "willMsg": {},
-        "userProps": "",
-        "sessionExpiry": ""
+        "id": "8a09d6923db47553",
+        "type": "postgresql",
+        "z": "b2c61c7f661953be",
+        "name": "Save Maintenance Action",
+        "query": "INSERT INTO maintenance_actions (\n    machine_id,\n    priority,\n    risk_driver,\n    recommended_action,\n    health_score,\n    failure_probability,\n    status\n)\nSELECT\n    $1::varchar(20),\n    $2::varchar(20),\n    $3::varchar(30),\n    $4::text,\n    $5::integer,\n    $6::double precision,\n    'OPEN'\nWHERE NOT EXISTS (\n    SELECT 1\n    FROM maintenance_actions\n    WHERE machine_id = $1::varchar(20)\n      AND status IN ('OPEN', 'IN PROGRESS')\n);",
+        "postgreSQLConfig": "916899e6d61ccddd",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 250,
+        "y": 660,
+        "wires": [
+            []
+        ]
     },
     {
-        "id": "916899e6d61ccddd",
-        "type": "postgreSQLConfig",
-        "name": "",
-        "host": "localhost",
-        "hostFieldType": "str",
-        "port": 5432,
-        "portFieldType": "num",
-        "database": "predictive_maintenance",
-        "databaseFieldType": "str",
-        "ssl": "false",
-        "sslFieldType": "bool",
-        "applicationName": "",
-        "applicationNameType": "str",
-        "max": 10,
-        "maxFieldType": "num",
-        "idle": 1000,
-        "idleFieldType": "num",
-        "connectionTimeout": 10000,
-        "connectionTimeoutFieldType": "num",
-        "userFieldType": "cred",
-        "userEnv": "",
-        "passwordFieldType": "cred",
-        "passwordEnv": ""
+        "id": "05f113467784b642",
+        "type": "inject",
+        "z": "b2c61c7f661953be",
+        "name": "Start Maintenance - Test",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "machine01",
+        "payloadType": "str",
+        "x": 470,
+        "y": 720,
+        "wires": [
+            [
+                "b64b614c306f92c1"
+            ]
+        ]
     },
     {
-        "id": "33e2015d2ae4e9ad",
-        "type": "global-config",
-        "env": [],
-        "modules": {
-            "node-red-contrib-postgresql": "0.16.2"
-        }
+        "id": "b64b614c306f92c1",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Build Start Maintenance SQL",
+        "func": "const machineId = msg.payload;\n\nif (!machineId) {\n    node.warn(\"Missing machine_id\");\n    return null;\n}\n\nmsg.params = [machineId];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 720,
+        "wires": [
+            [
+                "7f73174bd70d9025"
+            ]
+        ]
+    },
+    {
+        "id": "7f73174bd70d9025",
+        "type": "postgresql",
+        "z": "b2c61c7f661953be",
+        "name": "Start Maintenance",
+        "query": "UPDATE maintenance_actions\nSET\n    status = 'IN PROGRESS',\n    started_at = CURRENT_TIMESTAMP\nWHERE id = (\n    SELECT id\n    FROM maintenance_actions\n    WHERE machine_id = $1::varchar(20)\n      AND status = 'OPEN'\n    ORDER BY created_at DESC\n    LIMIT 1\n);",
+        "postgreSQLConfig": "916899e6d61ccddd",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 970,
+        "y": 720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f1a62d09fdc68323",
+        "type": "inject",
+        "z": "b2c61c7f661953be",
+        "name": "Complete Maintenance - Test",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "machine01",
+        "payloadType": "str",
+        "x": 480,
+        "y": 800,
+        "wires": [
+            [
+                "a2644a96f3dcc756"
+            ]
+        ]
+    },
+    {
+        "id": "a2644a96f3dcc756",
+        "type": "function",
+        "z": "b2c61c7f661953be",
+        "name": "Build Complete Maintenance SQL",
+        "func": "const machineId = msg.payload;\n\nif (!machineId) {\n    node.warn(\"Missing machine_id\");\n    return null;\n}\n\nmsg.params = [machineId];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 800,
+        "wires": [
+            [
+                "9d8135d7ea1de784"
+            ]
+        ]
+    },
+    {
+        "id": "9d8135d7ea1de784",
+        "type": "postgresql",
+        "z": "b2c61c7f661953be",
+        "name": "Complete Maintenance",
+        "query": "UPDATE maintenance_actions\nSET\n    status = 'COMPLETED',\n    completed_at = CURRENT_TIMESTAMP\nWHERE id = (\n    SELECT id\n    FROM maintenance_actions\n    WHERE machine_id = $1::varchar(20)\n      AND status = 'IN PROGRESS'\n    ORDER BY created_at DESC\n    LIMIT 1\n);",
+        "postgreSQLConfig": "916899e6d61ccddd",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1050,
+        "y": 800,
+        "wires": [
+            []
+        ]
     }
 ]

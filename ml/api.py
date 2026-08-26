@@ -50,7 +50,7 @@ def predict(data: SensorData):
         ]
     )
 
-    prediction = int(model.predict(sample)[0])
+    prediction = str(model.predict(sample)[0])
 
     return {
         "prediction": prediction
