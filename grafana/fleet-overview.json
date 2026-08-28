@@ -5,8 +5,8 @@
     "name": "adjttd4",
     "namespace": "default",
     "uid": "4b888f0d-a7dd-4321-a6d0-ec0f872db0e9",
-    "resourceVersion": "1787732756387990",
-    "generation": 21,
+    "resourceVersion": "1787906371350015",
+    "generation": 24,
     "creationTimestamp": "2026-08-25T12:54:54Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "2564036207214592"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:dfw8wdd9n2b5sd",
       "grafana.app/saved-from-ui": "Grafana v13.2.0 (f681b1359f)",
       "grafana.app/updatedBy": "user:dfw8wdd9n2b5sd",
-      "grafana.app/updatedTimestamp": "2026-08-26T08:25:56Z"
+      "grafana.app/updatedTimestamp": "2026-08-28T08:39:31Z"
     }
   },
   "spec": {
@@ -1050,6 +1050,471 @@
                         "value": {
                           "fixedColor": "dark-red",
                           "mode": "fixed"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-16": {
+        "kind": "Panel",
+        "spec": {
+          "id": 16,
+          "title": "Active Maintenance Actions",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cfw8yvulyu60wd"
+                      },
+                      "spec": {
+                        "dataset": "predictive_maintenance",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT\r\n    machine_id AS \"Machine\",\r\n    priority AS \"Priority\",\r\n    risk_driver AS \"Risk Driver\",\r\n    health_score AS \"Health Score\",\r\n    ROUND((failure_probability * 100)::numeric, 1) AS \"Failure Probability (%)\",\r\n    status AS \"Status\",\r\n    created_at AT TIME ZONE 'Europe/Athens' AS \"Created\"\r\nFROM maintenance_actions\r\nWHERE status IN ('OPEN', 'IN PROGRESS')\r\nORDER BY\r\n    CASE priority\r\n        WHEN 'CRITICAL' THEN 1\r\n        WHEN 'HIGH' THEN 2\r\n        ELSE 3\r\n    END,\r\n    created_at ASC;",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "table",
+            "version": "13.2.0",
+            "spec": {
+              "options": {
+                "cellHeight": "sm",
+                "showHeader": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "footer": {
+                      "reducers": []
+                    },
+                    "inspect": false
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Priority"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "type": "color-background"
+                        }
+                      },
+                      {
+                        "id": "mappings",
+                        "value": [
+                          {
+                            "options": {
+                              "CRITICAL": {
+                                "color": "dark-red",
+                                "index": 0,
+                                "text": "CRITICAL"
+                              },
+                              "HIGH": {
+                                "color": "dark-orange",
+                                "index": 1,
+                                "text": "HIGH"
+                              }
+                            },
+                            "type": "value"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Health Score"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "mode": "gradient",
+                          "type": "color-background"
+                        }
+                      },
+                      {
+                        "id": "thresholds",
+                        "value": {
+                          "mode": "absolute",
+                          "steps": [
+                            {
+                              "color": "dark-red",
+                              "value": 0
+                            },
+                            {
+                              "color": "dark-orange",
+                              "value": 26
+                            },
+                            {
+                              "color": "#EAB839",
+                              "value": 51
+                            },
+                            {
+                              "color": "dark-green",
+                              "value": 76
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Status"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "type": "color-background"
+                        }
+                      },
+                      {
+                        "id": "mappings",
+                        "value": [
+                          {
+                            "options": {
+                              "IN PROGRESS": {
+                                "color": "dark-blue",
+                                "index": 1,
+                                "text": "IN PROGRESS"
+                              },
+                              "OPEN": {
+                                "color": "dark-orange",
+                                "index": 0,
+                                "text": "OPEN"
+                              }
+                            },
+                            "type": "value"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Failure Probability (%)"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "type": "color-background"
+                        }
+                      },
+                      {
+                        "id": "thresholds",
+                        "value": {
+                          "mode": "absolute",
+                          "steps": [
+                            {
+                              "color": "dark-green",
+                              "value": 0
+                            },
+                            {
+                              "color": "dark-yellow",
+                              "value": 40
+                            },
+                            {
+                              "color": "dark-orange",
+                              "value": 60
+                            },
+                            {
+                              "color": "dark-red",
+                              "value": 80
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-17": {
+        "kind": "Panel",
+        "spec": {
+          "id": 17,
+          "title": "Maintenance Action Summary",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "grafana-postgresql-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cfw8yvulyu60wd"
+                      },
+                      "spec": {
+                        "dataset": "predictive_maintenance",
+                        "editorMode": "code",
+                        "format": "table",
+                        "rawQuery": true,
+                        "rawSql": "SELECT\r\n    COUNT(*) FILTER (\r\n        WHERE status = 'OPEN'\r\n    ) AS \"Open Actions\",\r\n\r\n    COUNT(*) FILTER (\r\n        WHERE status = 'IN PROGRESS'\r\n    ) AS \"In Progress\",\r\n\r\n    COUNT(*) FILTER (\r\n        WHERE status = 'OPEN'\r\n          AND priority = 'CRITICAL'\r\n    ) AS \"Critical Open\",\r\n\r\n    COUNT(*) FILTER (\r\n        WHERE status = 'COMPLETED'\r\n          AND completed_at >= CURRENT_DATE\r\n          AND completed_at < CURRENT_DATE + INTERVAL '1 day'\r\n    ) AS \"Completed Today\"\r\n\r\nFROM maintenance_actions;",
+                        "sql": {
+                          "columns": [
+                            {
+                              "parameters": [],
+                              "type": "function"
+                            }
+                          ],
+                          "groupBy": [
+                            {
+                              "property": {
+                                "type": "string"
+                              },
+                              "type": "groupBy"
+                            }
+                          ],
+                          "limit": 50
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "stat",
+            "version": "13.2.0",
+            "spec": {
+              "options": {
+                "colorMode": "value",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "vertical",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "value_and_name",
+                "wideLayout": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds",
+                    "fixedColor": "#ad46ff"
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Open Actions"
+                    },
+                    "properties": [
+                      {
+                        "id": "thresholds",
+                        "value": {
+                          "mode": "absolute",
+                          "steps": [
+                            {
+                              "color": "green",
+                              "value": 0
+                            },
+                            {
+                              "color": "dark-yellow",
+                              "value": 1
+                            },
+                            {
+                              "color": "dark-red",
+                              "value": 3
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "In Progress"
+                    },
+                    "properties": [
+                      {
+                        "id": "thresholds",
+                        "value": {
+                          "mode": "absolute",
+                          "steps": [
+                            {
+                              "color": "dark-yellow",
+                              "value": 0
+                            },
+                            {
+                              "color": "dark-green",
+                              "value": 1
+                            },
+                            {
+                              "color": "dark-blue",
+                              "value": 3
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Critical Open"
+                    },
+                    "properties": [
+                      {
+                        "id": "thresholds",
+                        "value": {
+                          "mode": "absolute",
+                          "steps": [
+                            {
+                              "color": "green",
+                              "value": 0
+                            },
+                            {
+                              "color": "dark-orange",
+                              "value": 1
+                            },
+                            {
+                              "color": "dark-red",
+                              "value": 2
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Completed Today"
+                    },
+                    "properties": [
+                      {
+                        "id": "thresholds",
+                        "value": {
+                          "mode": "absolute",
+                          "steps": [
+                            {
+                              "color": "#6e6d6cf7",
+                              "value": 0
+                            },
+                            {
+                              "color": "dark-green",
+                              "value": 1
+                            }
+                          ]
                         }
                       }
                     ]
@@ -2149,8 +2614,8 @@
             "spec": {
               "x": 0,
               "y": 9,
-              "width": 24,
-              "height": 8,
+              "width": 12,
+              "height": 7,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-9"
@@ -2160,13 +2625,78 @@
           {
             "kind": "GridLayoutItem",
             "spec": {
+              "x": 12,
+              "y": 9,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-13"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
               "x": 0,
-              "y": 17,
+              "y": 16,
+              "width": 19,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-12"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 19,
+              "y": 16,
+              "width": 5,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-14"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 24,
+              "width": 19,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-16"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 19,
+              "y": 24,
+              "width": 5,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-15"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 32,
               "width": 12,
               "height": 8,
               "element": {
                 "kind": "ElementReference",
-                "name": "panel-10"
+                "name": "panel-17"
               }
             }
           },
@@ -2174,7 +2704,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 12,
-              "y": 17,
+              "y": 32,
               "width": 12,
               "height": 8,
               "element": {
@@ -2187,51 +2717,12 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 25,
-              "width": 20,
-              "height": 8,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-12"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 0,
-              "y": 33,
+              "y": 40,
               "width": 12,
               "height": 8,
               "element": {
                 "kind": "ElementReference",
-                "name": "panel-13"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 12,
-              "y": 33,
-              "width": 12,
-              "height": 8,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-14"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 0,
-              "y": 41,
-              "width": 12,
-              "height": 8,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-15"
+                "name": "panel-10"
               }
             }
           }

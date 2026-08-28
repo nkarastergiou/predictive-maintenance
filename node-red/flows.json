@@ -1,75 +1,11 @@
 [
     {
-        "id": "0a2496607df3ed37",
-        "type": "tab",
-        "label": "Flow 1",
-        "disabled": true,
-        "info": "",
-        "env": []
-    },
-    {
         "id": "b2c61c7f661953be",
         "type": "tab",
         "label": "Flow 1",
         "disabled": false,
         "info": "",
         "env": []
-    },
-    {
-        "id": "22afef3778458597",
-        "type": "mqtt-broker",
-        "name": "",
-        "broker": "localhost",
-        "port": 1883,
-        "clientid": "",
-        "autoConnect": true,
-        "usetls": false,
-        "protocolVersion": 4,
-        "keepalive": 60,
-        "cleansession": true,
-        "autoUnsubscribe": true,
-        "birthTopic": "",
-        "birthQos": "0",
-        "birthRetain": "false",
-        "birthPayload": "",
-        "birthMsg": {},
-        "closeTopic": "",
-        "closeQos": "0",
-        "closeRetain": "false",
-        "closePayload": "",
-        "closeMsg": {},
-        "willTopic": "",
-        "willQos": "0",
-        "willRetain": "false",
-        "willPayload": "",
-        "willMsg": {},
-        "userProps": "",
-        "sessionExpiry": ""
-    },
-    {
-        "id": "916899e6d61ccddd",
-        "type": "postgreSQLConfig",
-        "name": "",
-        "host": "localhost",
-        "hostFieldType": "str",
-        "port": 5432,
-        "portFieldType": "num",
-        "database": "predictive_maintenance",
-        "databaseFieldType": "str",
-        "ssl": "false",
-        "sslFieldType": "bool",
-        "applicationName": "",
-        "applicationNameType": "str",
-        "max": 10,
-        "maxFieldType": "num",
-        "idle": 1000,
-        "idleFieldType": "num",
-        "connectionTimeout": 10000,
-        "connectionTimeoutFieldType": "num",
-        "userFieldType": "cred",
-        "userEnv": "",
-        "passwordFieldType": "cred",
-        "passwordEnv": ""
     },
     {
         "id": "b5af831c8cf31a89",
@@ -836,125 +772,67 @@
         ]
     },
     {
-        "id": "05f113467784b642",
-        "type": "inject",
-        "z": "b2c61c7f661953be",
-        "name": "Start Maintenance - Test",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "machine01",
-        "payloadType": "str",
-        "x": 470,
-        "y": 720,
-        "wires": [
-            [
-                "b64b614c306f92c1"
-            ]
-        ]
+        "id": "22afef3778458597",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
     },
     {
-        "id": "b64b614c306f92c1",
-        "type": "function",
-        "z": "b2c61c7f661953be",
-        "name": "Build Start Maintenance SQL",
-        "func": "const machineId = msg.payload;\n\nif (!machineId) {\n    node.warn(\"Missing machine_id\");\n    return null;\n}\n\nmsg.params = [machineId];\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 720,
-        "y": 720,
-        "wires": [
-            [
-                "7f73174bd70d9025"
-            ]
-        ]
+        "id": "916899e6d61ccddd",
+        "type": "postgreSQLConfig",
+        "name": "",
+        "host": "localhost",
+        "hostFieldType": "str",
+        "port": 5432,
+        "portFieldType": "num",
+        "database": "predictive_maintenance",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": 10,
+        "maxFieldType": "num",
+        "idle": 1000,
+        "idleFieldType": "num",
+        "connectionTimeout": 10000,
+        "connectionTimeoutFieldType": "num",
+        "userFieldType": "cred",
+        "userEnv": "",
+        "passwordFieldType": "cred",
+        "passwordEnv": ""
     },
     {
-        "id": "7f73174bd70d9025",
-        "type": "postgresql",
-        "z": "b2c61c7f661953be",
-        "name": "Start Maintenance",
-        "query": "UPDATE maintenance_actions\nSET\n    status = 'IN PROGRESS',\n    started_at = CURRENT_TIMESTAMP\nWHERE id = (\n    SELECT id\n    FROM maintenance_actions\n    WHERE machine_id = $1::varchar(20)\n      AND status = 'OPEN'\n    ORDER BY created_at DESC\n    LIMIT 1\n);",
-        "postgreSQLConfig": "916899e6d61ccddd",
-        "split": false,
-        "rowsPerMsg": 1,
-        "outputs": 1,
-        "x": 970,
-        "y": 720,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "f1a62d09fdc68323",
-        "type": "inject",
-        "z": "b2c61c7f661953be",
-        "name": "Complete Maintenance - Test",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "machine01",
-        "payloadType": "str",
-        "x": 480,
-        "y": 800,
-        "wires": [
-            [
-                "a2644a96f3dcc756"
-            ]
-        ]
-    },
-    {
-        "id": "a2644a96f3dcc756",
-        "type": "function",
-        "z": "b2c61c7f661953be",
-        "name": "Build Complete Maintenance SQL",
-        "func": "const machineId = msg.payload;\n\nif (!machineId) {\n    node.warn(\"Missing machine_id\");\n    return null;\n}\n\nmsg.params = [machineId];\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 760,
-        "y": 800,
-        "wires": [
-            [
-                "9d8135d7ea1de784"
-            ]
-        ]
-    },
-    {
-        "id": "9d8135d7ea1de784",
-        "type": "postgresql",
-        "z": "b2c61c7f661953be",
-        "name": "Complete Maintenance",
-        "query": "UPDATE maintenance_actions\nSET\n    status = 'COMPLETED',\n    completed_at = CURRENT_TIMESTAMP\nWHERE id = (\n    SELECT id\n    FROM maintenance_actions\n    WHERE machine_id = $1::varchar(20)\n      AND status = 'IN PROGRESS'\n    ORDER BY created_at DESC\n    LIMIT 1\n);",
-        "postgreSQLConfig": "916899e6d61ccddd",
-        "split": false,
-        "rowsPerMsg": 1,
-        "outputs": 1,
-        "x": 1050,
-        "y": 800,
-        "wires": [
-            []
-        ]
+        "id": "3951919940615864",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-postgresql": "0.16.2"
+        }
     }
 ]
